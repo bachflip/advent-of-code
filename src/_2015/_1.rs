@@ -1,18 +1,29 @@
 pub fn _1(input: String) {
-    let mut floor = 0;
-    for c in input.chars() {
-        if c == '(' {
-            floor += 1;
-        } 
-        if c == ')' {
-            floor -= 1;
+    let floor = input.chars().fold(0, |acc, x| {
+        if x == '(' {
+            acc + 1
+        } else if x == ')' {
+            acc - 1
+        } else {
+            acc
         }
-    }
+    });
     println!("{}", floor);
 }
 
 pub fn _2(input: String) {
-    println!("hello from day 2 of year 2015");
+    let mut found = false;
+    input.chars().enumerate().fold(0, |acc, (i, x)| {
+        if acc == -1 && !found {
+            println!("{}", i);
+            found = true;
+        }
+        if x == '(' {
+            acc + 1
+        } else if x == ')' {
+            acc - 1
+        } else {
+            acc
+        }
+    });
 }
-
-

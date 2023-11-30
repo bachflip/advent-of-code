@@ -1,7 +1,6 @@
 pub mod _2015;
 
-use std::{path::PathBuf, env, fs, collections::BTreeMap};
-
+use std::{collections::BTreeMap, env, fs, path::PathBuf};
 
 fn main() {
     let project_dir = env!("CARGO_MANIFEST_DIR");
@@ -19,7 +18,13 @@ fn main() {
     path.push(day);
     path.push(problem);
     let input = read_input(path);
-    let solver_key = format!("{}::_{}::_{}::_{}", env!("CARGO_CRATE_NAME"), year, day, problem);
+    let solver_key = format!(
+        "{}::_{}::_{}::_{}",
+        env!("CARGO_CRATE_NAME"),
+        year,
+        day,
+        problem
+    );
 
     let mut solvers: BTreeMap<String, fn(String)> = BTreeMap::new();
 
@@ -27,7 +32,6 @@ fn main() {
     solvers.insert(fn_name(_2015::_1::_2).to_string(), _2015::_1::_2);
 
     solvers.get(&solver_key).unwrap()(input);
-
 }
 
 fn read_input(path: PathBuf) -> String {
@@ -41,4 +45,3 @@ where
 {
     std::any::type_name::<F>()
 }
-
