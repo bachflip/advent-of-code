@@ -30,9 +30,13 @@ pub fn _2(input: String) {
         ("eight", 8),
         ("nine", 9),
     ]);
-    
-    let all_spelled_out = digits.keys().map(|s| s.to_string()).chain(digits.values().map(|d| d.to_string())).collect::<Vec<String>>();
-    
+
+    let all_spelled_out = digits
+        .keys()
+        .map(|s| s.to_string())
+        .chain(digits.values().map(|d| d.to_string()))
+        .collect::<Vec<String>>();
+
     let mut result = 0;
     for line in input.lines() {
         let mut first_idx = line.len() - 1;
@@ -40,36 +44,34 @@ pub fn _2(input: String) {
 
         let mut first_digit = "".to_string();
         let mut last_digit = "".to_string();
-            for d in &all_spelled_out {
+        for d in &all_spelled_out {
             if let Some(left_find) = line.find(d) {
                 if left_find <= first_idx {
-                    first_idx = left_find; 
+                    first_idx = left_find;
                     first_digit = d.to_string();
                 }
             }
 
             if let Some(right_find) = line.rfind(d) {
-                if right_find >= last_idx  {
-                    last_idx = right_find; 
+                if right_find >= last_idx {
+                    last_idx = right_find;
                     last_digit = d.to_string();
                 }
             }
         }
-        let mut first = 0;
-        let mut last = 0;
-        if let Ok(first_digit) = first_digit.parse::<i32>() {
-            first = first_digit;
+        let first = if let Ok(first_digit) = first_digit.parse::<i32>() {
+            first_digit
         } else {
-            first = *digits.get(&first_digit.as_str()).unwrap();
-        }
-        if let Ok(last_digit) = last_digit.parse::<i32>() {
-            last = last_digit;
+            *digits.get(&first_digit.as_str()).unwrap()
+        };
+        let last = if let Ok(last_digit) = last_digit.parse::<i32>() {
+            last_digit
         } else {
-            last = *digits.get(&last_digit.as_str()).unwrap();
-        }
+            *digits.get(&last_digit.as_str()).unwrap()
+        };
 
         result += first * 10 + last;
     }
-
+    
     println!("{}", result);
 }
