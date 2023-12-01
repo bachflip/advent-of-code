@@ -1,4 +1,5 @@
 pub mod _2015;
+pub mod _2023;
 
 use std::{collections::BTreeMap, env, fs, path::PathBuf};
 
@@ -31,6 +32,11 @@ fn main() {
     solvers.insert(fn_name(_2015::_1::_2).to_string(), _2015::_1::_2);
     solvers.insert(fn_name(_2015::_2::_1).to_string(), _2015::_2::_1);
     solvers.insert(fn_name(_2015::_2::_2).to_string(), _2015::_2::_2);
+
+
+    solvers.insert(fn_name(_2023::_1::_1).to_string(), _2023::_1::_1);
+    solvers.insert(fn_name(_2023::_1::_2).to_string(), _2015::_1::_2);
+
 
     solvers.get(&solver_key).unwrap()(input);
 }
