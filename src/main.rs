@@ -18,6 +18,7 @@ fn main() {
     path.push(year);
     path.push(day);
     let input = read_input(path);
+
     let solver_key = format!(
         "{}::_{}::_{}::_{}",
         env!("CARGO_CRATE_NAME"),
@@ -28,13 +29,20 @@ fn main() {
 
     let mut solvers: BTreeMap<String, fn(String)> = BTreeMap::new();
 
-    solvers.insert(fn_name(_2015::_1::_1).to_string(), _2015::_1::_1);
-    solvers.insert(fn_name(_2015::_1::_2).to_string(), _2015::_1::_2);
-    solvers.insert(fn_name(_2015::_2::_1).to_string(), _2015::_2::_1);
-    solvers.insert(fn_name(_2015::_2::_2).to_string(), _2015::_2::_2);
+    macro_rules! register {
+        ( $solver:path ) => {{
+            solvers.insert(fn_name($solver).to_string(), $solver);
+        }};
+    }
 
-    solvers.insert(fn_name(_2023::_1::_1).to_string(), _2023::_1::_1);
-    solvers.insert(fn_name(_2023::_1::_2).to_string(), _2023::_1::_2);
+    register!(_2015::_1::_1);
+    register!(_2015::_1::_2);
+    register!(_2015::_2::_1);
+    register!(_2015::_2::_2);
+
+    register!(_2023::_1::_1);
+    register!(_2023::_1::_2);
+    register!(_2023::_2::_1);
 
     solvers.get(&solver_key).unwrap()(input);
 }

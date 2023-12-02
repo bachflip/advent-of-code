@@ -72,6 +72,6 @@ pub fn _2(input: String) {
 
         result += first * 10 + last;
     }
-    
+
     println!("{}", result);
 }
