@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub fn _1(input: String) {
     let red_limit = 12;
     let green_limit = 13;
@@ -61,50 +63,25 @@ pub fn _1(input: String) {
 }
 
 pub fn _2(input: String) {
-    let mut result = 0;
-
-    let num_balls = |line: &str, color: &str| {
-        line.strip_prefix(' ')
+    let result = input.lines().fold(0, |acc, line| {
+        acc + line
+            .split(':')
+            .last()
             .unwrap()
-            .strip_suffix(&format!(" {}", color))
-            .unwrap()
-            .parse::<i32>()
-            .unwrap()
-    };
+            .replace(';', ",")
+            .split(',')
+            .map(|color| color.strip_prefix(' ').unwrap().split_once(' ').unwrap())
+            .map(|(num, color)| (num.parse::<i32>().unwrap(), color))
+            .fold(vec![0; 3], |acc, (num, color)| {
+                vec![
+                    std::cmp::max(acc[0], ((color == "red") as i32) * num),
+                    std::cmp::max(acc[1], ((color == "blue") as i32) * num),
+                    std::cmp::max(acc[2], ((color == "green") as i32) * num),
+                ]
+            })
+            .iter()
+            .product::<i32>()
+    });
 
-    for line in input.lines() {
-        let mut min_red = 0;
-        let mut min_green = 0;
-        let mut min_blue = 0;
-
-        let drawns = line.split(':').last().unwrap().split(';');
-        for drawn in drawns {
-            let balls = drawn.split(',');
-            balls.for_each(|x| {
-                if x.contains("red") {
-                    let red = num_balls(x, "red");
-                    if red > min_red {
-                        min_red = red;
-                    }
-                }
-
-                if x.contains("blue") {
-                    let blue = num_balls(x, "blue");
-                    if blue > min_blue {
-                        min_blue = blue;
-                    }
-                }
-
-                if x.contains("green") {
-                    let green = num_balls(x, "green");
-                    if green > min_green {
-                        min_green = green;
-                    }
-                }
-            });
-        }
-        result += min_red * min_blue * min_green; 
-       // println!("{} {} {}", min_red, min_green, min_blue);
-    }
     println!("{}", result);
 }
