@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 pub fn _1(input: String) {
     let red_limit = 12;
     let green_limit = 13;
@@ -72,12 +70,10 @@ pub fn _2(input: String) {
             .split(',')
             .map(|color| color.strip_prefix(' ').unwrap().split_once(' ').unwrap())
             .map(|(num, color)| (num.parse::<i32>().unwrap(), color))
-            .fold(vec![0; 3], |acc, (num, color)| {
-                vec![
-                    std::cmp::max(acc[0], ((color == "red") as i32) * num),
-                    std::cmp::max(acc[1], ((color == "blue") as i32) * num),
-                    std::cmp::max(acc[2], ((color == "green") as i32) * num),
-                ]
+            .fold(vec![0; 3], |a, (n, c)| {
+                (0..3)
+                    .map(|i| std::cmp::max(a[i], ((c.len() - 3 == i) as i32) * n))
+                    .collect()
             })
             .iter()
             .product::<i32>()
