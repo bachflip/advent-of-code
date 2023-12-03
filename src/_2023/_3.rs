@@ -12,7 +12,7 @@ pub fn _1(input: String) {
 ...$.*....
 .664.598..";
 
-    let mut split = input.split_whitespace();
+    let split = input.split_whitespace();
     let height = split.clone().count();
     let width = split.clone().next().unwrap().len();
 
@@ -99,18 +99,7 @@ pub fn _1(input: String) {
 }
 
 pub fn _2(input: String) {
-    let _input = "467..114..
-...*......
-..35..633.
-......#...
-617*......
-.....+.58.
-..592.....
-......755.
-...$.*....
-.664.598..";
-
-    let mut split = input.split_whitespace();
+    let split = input.split_whitespace();
     let height = split.clone().count();
     let width = split.clone().next().unwrap().len();
 
@@ -185,19 +174,19 @@ pub fn _2(input: String) {
         }
     }).collect::<HashMap<usize, (u32, u32)>>();
 
-    let mut result = 0;
-    for (k, v) in numbers.into_iter() {
+    let result = numbers.into_iter().fold(0, |mut acc, (k, v)| {
         let adjacents = adjacents_to_number(k, v);
-        for (i, s) in star_indices.iter_mut() {
+        star_indices.iter_mut().for_each(|(i, s)| {
             if adjacents.contains(i)  {
                 s.0 += 1;
                 s.1 *= v;
                 if s.0 == 2 {
-                    result += s.1;
+                    acc += s.1;
                 }
             }
-        }
-    }
+        });
+        acc
+    });
 
     println!("{:#?}", result);
 
