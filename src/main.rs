@@ -46,6 +46,8 @@ fn main() {
     register!(_2023::_2::_2);
     register!(_2023::_3::_1);
     register!(_2023::_3::_2);
+    register!(_2023::_4::_1);
+    register!(_2023::_4::_2);
 
     solvers.get(&solver_key).unwrap()(input);
 }
