@@ -1,6 +1,6 @@
 pub fn _1(input: String) {
     let _input = "Time:      7  15   30
-Distance:  9  40  200";
+        Distance:  9  40  200";
 
     let mut time_distance = vec![];
     for line in input.lines() {
@@ -31,4 +31,23 @@ Distance:  9  40  200";
 
     println!("{}", result);
 }
-pub fn _2(input: String) {}
+pub fn _2(input: String) {
+    let _input = "Time:      7  15   30
+Distance:  9  40  200";
+
+    let mut time_distance = vec![];
+    for line in input.lines() {
+        let parsed = line.split_once(":").unwrap().1.trim().replace(" ", "");
+        println!("{:#?}", parsed);
+        let parsed = parsed.parse::<u64>().unwrap();
+        time_distance.push(parsed);
+    }
+    let mut result = 0;
+    for i in 1..time_distance[0] {
+        if i * (time_distance[0] - i) > time_distance[1] {
+            result += 1;
+        }
+    }
+
+    println!("{}", result);
+}
