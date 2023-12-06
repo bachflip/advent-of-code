@@ -68,7 +68,7 @@ humidity-to-location map:
     assert!(result == 1181555926);
 }
 pub fn _2(input: String) {
-    let input = "seeds: 79 14 55 13
+    let _input = "seeds: 79 14 55 13
 
 seed-to-soil map:
 50 98 2
@@ -115,7 +115,6 @@ humidity-to-location map:
         .collect::<Vec<u64>>();
     let mut seeds = binding.chunks(2).map(|x| (x[0], x[1])).collect::<Vec<_>>();
 
-    //let mut mapped = vec![];
     for section in sections {
         let maps = section.trim().split_once(":\n").unwrap().1;
         let mappings = maps
@@ -129,53 +128,50 @@ humidity-to-location map:
             .map(|x| (x[0], x[1], x[2]))
             .collect::<Vec<_>>();
 
-        map_range(seeds.clone(), mappings);
-        break;
+        seeds = map_range(seeds.clone(), mappings);
     }
-    //let result = seeds.iter().min().unwrap().to_owned();
-    //    println!("{}", result);
-    //   assert!(result == 1181555926);
+    let result = seeds.iter().min_by_key(|x| x.0).unwrap().to_owned().0;
+    println!("{}", result);
+    assert!(result > 6683081);
 }
 
 fn map_range(input: Vec<(u64, u64)>, mapping: Vec<(u64, u64, u64)>) -> Vec<(u64, u64)> {
-    let mapping = mapping.into_iter().collect::<VecDeque<_>>();
-
     let mut input = input.into_iter().collect::<VecDeque<_>>();
-    let mut output = VecDeque::new();
+    let mut output = Vec::new();
 
     loop {
-        let input_len = input.len();
-        if input_len == 0 {
+        if input.len() == 0 {
             break;
         }
 
         let mut src = input.pop_front().unwrap();
-        let it = mapping.iter();
-        for map in it {
+        for map in mapping.iter() {
             let result = split_range(src, *map);
             if result.len() == 0 {
                 continue;
             } else if result.len() == 1 {
-                output.push_back(result[0]);
+                output.push(result[0]);
             } else if result.len() == 2 {
-                output.push_back(result[0]);
+                output.push(result[0]);
                 input.push_back(result[1]);
-            } else {
-                output.push_back(result[0]);
+            } else if result.len() == 3 {
+                output.push(result[0]);
                 input.push_back(result[1]);
                 input.push_back(result[2]);
+            } else {
+                panic!("this should not happen");
             }
             src = (0, 0);
         }
+
         if src != (0, 0) {
-            output.push_back(src);
+            output.push(src);
         }
     }
 
-    println!("{:#?}", input);
-    println!("{:#?}", output);
+    //println!("{:#?}", output);
 
-    vec![]
+    output.into()
 }
 
 fn split_range(src: (u64, u64), map: (u64, u64, u64)) -> Vec<(u64, u64)> {
@@ -185,41 +181,24 @@ fn split_range(src: (u64, u64), map: (u64, u64, u64)) -> Vec<(u64, u64)> {
 
     if a + x <= b || b + y <= a {
         vec![]
-    } else if a <= b && b < a + x && a + x < b + y {
+    } else if a <= b && b < a + x && a + x <= b + y {
         let mapped = (des, a + x - b);
         let unmapped = (a, b - a);
-        println!("x");
-        println!("map {:#?}", map);
-        println!("src {:#?}", src);
-        println!("result {:#?}", mapped);
-
         vec![mapped, unmapped]
-    } else if a >= b && b + y > a && a + x > b + y {
+    } else if a >= b && b + y > a && a + x >= b + y {
         let mapped = (a - b + des, b + y - a);
         let unmapped = (b + y, a + x - b - y);
-        println!("xx");
-        println!("src {:#?}", src);
-        println!("map {:#?}", map);
-        println!("result {:#?}", mapped);
         vec![mapped, unmapped]
     } else if a >= b && a + x <= b + y {
         let mapped = (a - b + des, x);
-        println!("xxx");
-        println!("src {:#?}", src);
-        println!("map {:#?}", map);
-        println!("result {:#?}", mapped);
         vec![mapped]
     } else if b >= a && b + y <= a + x {
         let mapped = (des, y);
         let unmapped_1 = (a, b - a);
         let ummapped_2 = (b + y, a + x - b - y);
-        println!("xxxx");
-        println!("src {:#?}", src);
-        println!("map {:#?}", map);
-        println!("result {:#?}", mapped);
         vec![mapped, unmapped_1, ummapped_2]
     } else {
-        vec![]
+        panic!("this should not happen");
     }
 }
 
