@@ -37,17 +37,39 @@ Distance:  9  40  200";
 
     let mut time_distance = vec![];
     for line in input.lines() {
-        let parsed = line.split_once(":").unwrap().1.trim().replace(" ", "");
-        println!("{:#?}", parsed);
-        let parsed = parsed.parse::<u64>().unwrap();
+        let parsed = line
+            .split_once(":")
+            .unwrap()
+            .1
+            .trim()
+            .replace(" ", "")
+            .parse::<u64>()
+            .unwrap();
         time_distance.push(parsed);
     }
-    let mut result = 0;
-    for i in 1..time_distance[0] {
-        if i * (time_distance[0] - i) > time_distance[1] {
-            result += 1;
+    let time = time_distance[0];
+    let distance = time_distance[1];
+    let result;
+    let mut winning_left = u64::MAX;
+    let mut winning_right = u64::MAX;
+
+    for i in 0..time {
+        if i * (time - i) > distance {
+            winning_left = i;
+            break;
         }
     }
+    for i in (0..time).rev() {
+        if i * (time - i) > distance {
+            winning_right = i;
+            break;
+        }
+    }
+    println!("{}", winning_left);
+    println!("{}", winning_right);
+
+    result = winning_right + 1 - winning_left;
 
     println!("{}", result);
+    assert!(result == 39570185);
 }
