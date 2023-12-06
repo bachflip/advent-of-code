@@ -50,6 +50,8 @@ fn main() {
     register!(_2023::_4::_2);
     register!(_2023::_5::_1);
     register!(_2023::_5::_2);
+    register!(_2023::_6::_1);
+    register!(_2023::_6::_2);
 
     solvers.get(&solver_key).unwrap()(input);
 }
