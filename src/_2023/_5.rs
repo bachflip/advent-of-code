@@ -103,7 +103,8 @@ humidity-to-location map:
 56 93 4";
 
     let mut sections = input.split("\n\n");
-    let binding = sections
+
+    let seeds = sections
         .next()
         .unwrap()
         .split_once(":")
@@ -112,62 +113,67 @@ humidity-to-location map:
         .trim()
         .split_whitespace()
         .map(|x| x.parse::<u64>().unwrap())
-        .collect::<Vec<u64>>();
-    let mut seeds = binding.chunks(2).map(|x| (x[0], x[1])).collect::<Vec<_>>();
+        .collect::<Vec<u64>>()
+        .chunks(2)
+        .map(|x| (x[0], x[1]))
+        .collect::<Vec<(u64, u64)>>();
 
-    for section in sections {
-        let maps = section.trim().split_once(":\n").unwrap().1;
-        let mappings = maps
-            .split("\n")
-            .map(|x| {
-                x.trim()
-                    .split_whitespace()
-                    .map(|y| y.parse::<u64>().unwrap())
-                    .collect::<Vec<_>>()
-            })
-            .map(|x| (x[0], x[1], x[2]))
-            .collect::<Vec<_>>();
+    let result = sections
+        .fold(seeds, |acc, section| {
+            let mappings = section
+                .trim()
+                .split_once(":\n")
+                .unwrap()
+                .1
+                .split("\n")
+                .map(|x| {
+                    x.trim()
+                        .split_whitespace()
+                        .map(|y| y.parse::<u64>().unwrap())
+                        .collect::<Vec<u64>>()
+                })
+                .map(|x| (x[0], x[1], x[2]))
+                .collect::<Vec<_>>();
 
-        seeds = map_range(seeds.clone(), mappings);
-    }
-    let result = seeds.iter().map(|x| x.0).min().unwrap();
+            map_range(acc, mappings)
+        })
+        .iter()
+        .map(|x| x.0)
+        .min()
+        .unwrap();
     println!("{}", result);
     assert!(result == 37806486);
 }
 
 fn map_range(input: Vec<(u64, u64)>, mapping: Vec<(u64, u64, u64)>) -> Vec<(u64, u64)> {
     let mut input = input.into_iter().collect::<VecDeque<_>>();
-
     let mut output = Vec::new();
 
     loop {
-        if input.len() == 0 {
+        if input.is_empty() {
             break;
         }
 
         let mut src = Some(input.pop_front().unwrap());
         for map in mapping.iter() {
-            let result = split_range(src.unwrap(), *map);
-            if result.len() == 0 {
-                continue;
-            } else if result.len() == 1 {
-                output.push(result[0]);
-            } else if result.len() == 2 {
-                output.push(result[0]);
-                input.push_back(result[1]);
-            } else if result.len() == 3 {
-                output.push(result[0]);
-                input.push_back(result[1]);
-                input.push_back(result[2]);
+            let mut result = split_range(src.unwrap(), *map).into_iter();
+
+            if let Some(mapped) = result.next() {
+                output.push(mapped);
             } else {
-                panic!("this should not happen");
+                continue;
             }
+
+            for unmapped in result {
+                input.push_back(unmapped);
+            }
+
             src = None;
             break;
         }
 
-        if src.is_some() {
-            output.push(src.unwrap());
+        if let Some(src) = src {
+            output.push(src);
         }
     }
 
@@ -203,31 +209,3 @@ fn split_range(src: (u64, u64), map: (u64, u64, u64)) -> Vec<(u64, u64)> {
     }
     result
 }
-
-//#[cfg(test)]
-//mod test_split_range {
-//    use super::*;
-//    use pretty_assertions::{assert_eq, assert_ne};
-//
-//    #[test]
-//    fn test() {
-//        let input: Vec<((u64, u64), (u64, u64, u64))> = vec![
-//            ((1, 2), (5, 1, 2)),
-//            ((1, 3), (5, 2, 3)),
-//            ((1, 4), (5, 2, 2)),
-//            ((2, 2), (5, 1, 5)),
-//            ((2, 3), (5, 1, 3)),
-//        ];
-//
-//        let result = [
-//            vec![(1 + 5, 2)],
-//            vec![(2 + 5, 2), (1, 1)],
-//            vec![(2 + 5, 2), (1, 1), (4, 1)],
-//            vec![(2 + 5, 2)],
-//            vec![(2 + 5, 2), (4, 1)],
-//        ];
-//        for i in 0..input.len() {
-//            assert_eq!(split_range(input[i].0, input[i].1), result[i]);
-//        }
-//    }
-//}
