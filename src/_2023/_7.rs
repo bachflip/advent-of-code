@@ -56,6 +56,22 @@ QQQJA 483";
     assert!(result == 251029473);
 }
 
+fn hand_type(hand: &str) -> (usize, usize) {
+    let mut map: HashMap<char, usize> = HashMap::new();
+
+    for c in hand.chars() {
+        map.entry(c).and_modify(|x| *x += 1).or_insert(1);
+    }
+
+    let score_map: &[usize] = &[15, 18, 21, 33, 36, 84, 243];
+
+    let score = map
+        .into_values()
+        .fold(0, |acc, v| acc + 3_usize.pow(v.try_into().unwrap()));
+    let index = score_map.iter().position(|x| *x == score).unwrap();
+    (index, score)
+}
+
 pub fn _2(input: String) {
     let input = "32T3K 765
 T55J5 684
@@ -63,13 +79,13 @@ KK677 28
 KTJJT 220
 QQQJA 483";
     let mut hands = vec![];
-    let mut bids = vec![];
     for line in input.lines() {
         let (hand, bid) = line.trim().split_once(" ").unwrap();
-        let hand_type = hand_type(hand);
-        hands.push((hand, bid.parse::<usize>().unwrap()));
-        bids.push(bid.parse::<usize>().unwrap());
+        let (hand, score) = hand_type_2(hand);
+        hands.push((hand, score, bid.parse::<usize>().unwrap()));
     }
+
+    //println!("{:#?}", hands);
 
     let label_strength = HashMap::from([
         ('J', 1),
@@ -100,19 +116,22 @@ QQQJA 483";
                 return cmp.unwrap();
             }
         }
+        println!("should not be here");
         std::cmp::Ordering::Equal
     });
 
-    let result = hands.iter().enumerate().fold(0, |acc, (i, (_, bid))| {
-        println!("{} * {}", i + 1, bid);
+    println!("{:#?}", hands);
+
+    let result = hands.iter().enumerate().fold(0, |acc, (i, (_, _, bid))| {
+        //        println!("{} * {}", i + 1, bid);
         acc + (i + 1) * bid
     });
 
     println!("{:#?}", result);
-    assert!(result == 251029473);
+    assert!(result < 251097795);
 }
 
-fn hand_type(hand: &str) -> (usize, usize) {
+fn hand_type_2(hand: &str) -> (&str, usize) {
     let mut map: HashMap<char, usize> = HashMap::new();
 
     for c in hand.chars() {
@@ -126,7 +145,12 @@ fn hand_type(hand: &str) -> (usize, usize) {
         .fold(0, |acc, v| acc + 3_usize.pow(v.try_into().unwrap()));
     let index = score_map.iter().position(|x| *x == score).unwrap();
     let buff = hand.chars().filter(|x| *x == 'J').count();
-    //let index = index + buff;
-    //let score = score_map[index];
-    (index, score)
+    let index = index + buff;
+    let score = if index < score_map.len() {
+        score_map[index]
+    } else {
+        println!("once {:#?}", hand);
+        *score_map.last().unwrap()
+    };
+    (hand, score)
 }
