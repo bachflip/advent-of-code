@@ -1,5 +1,11 @@
-pub mod _2015;
-pub mod _2023;
+pub mod _1;
+pub mod _2;
+pub mod _3;
+pub mod _4;
+pub mod _5;
+pub mod _6;
+pub mod _7;
+pub mod _8;
 
 use std::{collections::BTreeMap, env, fs, path::PathBuf};
 
@@ -8,24 +14,16 @@ fn main() {
     let mut path: PathBuf = [project_dir, "input"].iter().collect();
 
     let args = env::args().collect::<Vec<String>>();
-    if args.len() < 4 {
-        panic!("cmd year day problem");
+    if args.len() < 3 {
+        panic!("cmd day problem");
     }
 
-    let year = &args[1];
-    let day = &args[2];
-    let problem = &args[3];
-    path.push(year);
+    let day = &args[1];
+    let problem = &args[2];
     path.push(day);
     let input = read_input(path);
 
-    let solver_key = format!(
-        "{}::_{}::_{}::_{}",
-        env!("CARGO_CRATE_NAME"),
-        year,
-        day,
-        problem
-    );
+    let solver_key = format!("{}::_{}::_{}", env!("CARGO_CRATE_NAME"), day, problem);
 
     let mut solvers: BTreeMap<String, fn(String)> = BTreeMap::new();
 
@@ -35,27 +33,22 @@ fn main() {
         }};
     }
 
-    register!(_2015::_1::_1);
-    register!(_2015::_1::_2);
-    register!(_2015::_2::_1);
-    register!(_2015::_2::_2);
-
-    register!(_2023::_1::_1);
-    register!(_2023::_1::_2);
-    register!(_2023::_2::_1);
-    register!(_2023::_2::_2);
-    register!(_2023::_3::_1);
-    register!(_2023::_3::_2);
-    register!(_2023::_4::_1);
-    register!(_2023::_4::_2);
-    register!(_2023::_5::_1);
-    register!(_2023::_5::_2);
-    register!(_2023::_6::_1);
-    register!(_2023::_6::_2);
-    register!(_2023::_7::_1);
-    register!(_2023::_7::_2);
-    register!(_2023::_8::_1);
-    register!(_2023::_8::_2);
+    register!(_1::_1);
+    register!(_1::_2);
+    register!(_2::_1);
+    register!(_2::_2);
+    register!(_3::_1);
+    register!(_3::_2);
+    register!(_4::_1);
+    register!(_4::_2);
+    register!(_5::_1);
+    register!(_5::_2);
+    register!(_6::_1);
+    register!(_6::_2);
+    register!(_7::_1);
+    register!(_7::_2);
+    register!(_8::_1);
+    register!(_8::_2);
 
     solvers.get(&solver_key).unwrap()(input);
 }
