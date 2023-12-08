@@ -81,7 +81,7 @@ QQQJA 483";
     let mut hands = vec![];
     for line in input.lines() {
         let (hand, bid) = line.trim().split_once(" ").unwrap();
-        let (hand, score) = hand_type_2(hand);
+        let score = hand_type_2(hand);
         hands.push((hand, score, bid.parse::<usize>().unwrap()));
     }
 
@@ -127,7 +127,7 @@ QQQJA 483";
     assert!(result == 251003917);
 }
 
-fn hand_type_2(hand: &str) -> (&str, usize) {
+fn hand_type_2(hand: &str) -> usize {
     let mut map: HashMap<char, usize> = HashMap::new();
 
     for c in hand.chars() {
@@ -165,5 +165,5 @@ fn hand_type_2(hand: &str) -> (&str, usize) {
         _ => index,
     };
     let score = score_map[index];
-    (hand, score)
+    score
 }
