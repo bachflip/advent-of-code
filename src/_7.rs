@@ -85,8 +85,6 @@ QQQJA 483";
         hands.push((hand, score, bid.parse::<usize>().unwrap()));
     }
 
-    //println!("{:#?}", hands);
-
     let label_strength = HashMap::from([
         ('J', 1),
         ('2', 2),
@@ -120,15 +118,13 @@ QQQJA 483";
         std::cmp::Ordering::Equal
     });
 
-    println!("{:#?}", hands);
-
-    let result = hands.iter().enumerate().fold(0, |acc, (i, (_, _, bid))| {
-        //        println!("{} * {}", i + 1, bid);
-        acc + (i + 1) * bid
-    });
+    let result = hands
+        .iter()
+        .enumerate()
+        .fold(0, |acc, (i, (_, _, bid))| acc + (i + 1) * bid);
 
     println!("{:#?}", result);
-    assert!(result < 251097795);
+    assert!(result == 251003917);
 }
 
 fn hand_type_2(hand: &str) -> (&str, usize) {
@@ -138,19 +134,36 @@ fn hand_type_2(hand: &str) -> (&str, usize) {
         map.entry(c).and_modify(|x| *x += 1).or_insert(1);
     }
 
-    let score_map: &[usize] = &[15, 18, 21, 33, 36, 84, 243];
+    let score_map: &[usize] = &[
+        15,  // high card
+        18,  // one pair
+        21,  // two pair
+        33,  // three of a kind
+        36,  // full house
+        84,  // four of a kind
+        243, // five of a kind
+    ];
 
+    let num_j = hand.chars().filter(|x| x == &'J').count();
     let score = map
         .into_values()
         .fold(0, |acc, v| acc + 3_usize.pow(v.try_into().unwrap()));
     let index = score_map.iter().position(|x| *x == score).unwrap();
-    let buff = hand.chars().filter(|x| *x == 'J').count();
-    let index = index + buff;
-    let score = if index < score_map.len() {
-        score_map[index]
-    } else {
-        println!("once {:#?}", hand);
-        *score_map.last().unwrap()
+    let index = match (index, num_j) {
+        (0, 1) => index + 1,
+        (1, 2) => index + 2,
+        (3, 3) => index + 2,
+        (5, 4) => index + 1,
+        (6, 5) => index,
+        (1, 1) => index + 2,
+        (2, 2) => index + 3,
+        (4, 3) => index + 2,
+        (3, 1) => index + 2,
+        (4, 2) => index + 2,
+        (5, 1) => index + 1,
+        (2, 1) => index + 2,
+        _ => index,
     };
+    let score = score_map[index];
     (hand, score)
 }
