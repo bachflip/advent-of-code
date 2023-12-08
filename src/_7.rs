@@ -143,8 +143,7 @@ fn hand_type_2(hand: &str) -> usize {
         84,  // four of a kind
         243, // five of a kind
     ];
-
-    let num_j = hand.chars().filter(|x| x == &'J').count();
+    let num_j = hand.matches(|x| x == 'J').count();
     let score = map
         .into_values()
         .fold(0, |acc, v| acc + 3_usize.pow(v.try_into().unwrap()));
