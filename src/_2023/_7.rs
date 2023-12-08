@@ -73,7 +73,7 @@ fn hand_type(hand: &str) -> (usize, usize) {
 }
 
 pub fn _2(input: String) {
-    let input = "32T3K 765
+    let _input = "32T3K 765
 T55J5 684
 KK677 28
 KTJJT 220
