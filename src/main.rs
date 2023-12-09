@@ -6,6 +6,7 @@ pub mod _5;
 pub mod _6;
 pub mod _7;
 pub mod _8;
+pub mod _9;
 
 use std::{collections::BTreeMap, env, fs, path::PathBuf};
 
@@ -49,6 +50,8 @@ fn main() {
     register!(_7::_2);
     register!(_8::_1);
     register!(_8::_2);
+    register!(_9::_1);
+    register!(_9::_2);
 
     solvers.get(&solver_key).unwrap()(input);
 }
